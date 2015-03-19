@@ -2,30 +2,16 @@
 #include "log_data.hpp"
 
 namespace so {
-    namespace {
-        std::string packed_tag(const std::string& tag) {
-            // TODO tag should be formatted as identifier.
-            return '#' + tag + ' ';
-        }
-    }
-
-    log::log(label head) :
-      data(new log_data(head)) {
+    log::log(log_filter::label label) :
+      data(new log_data(label)) {
     }
 
     void log::append_tag(const std::string& tag) {
-        auto piece = packed_tag(tag);
-        if (std::string::npos == this->data->tags.find(piece)) {
-            this->data->tags += piece;
-        }
+        this->data->tags.insert(tag);
     }
 
     void log::remove_tag(const std::string& tag) {
-        auto piece = packed_tag(tag);
-        auto begin = this->data->tags.find(piece);
-        if (begin != std::string::npos) {
-            this->data->tags.erase(begin, piece.length());
-        }
+        this->data->tags.insert(tag);
     }
 
     void log::clear_tags() {

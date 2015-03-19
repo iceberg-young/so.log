@@ -3,24 +3,16 @@
 
 #include <memory>
 #include <sstream>
+#include "log_filter.hpp"
 
 namespace so {
     class log :
       public std::ostringstream
     {
-    public:
-        enum class label
-        {
-            unknown,
-            failure,
-            warning,
-            caution,
-            message,
-            success,
-        };
+        friend std::ostream& operator<<(std::ostream& out, const class log& message);
 
     public:
-        log(label head);
+        log(log_filter::label label);
 
     public:
         void append_tag(const std::string& tag);

@@ -1,6 +1,7 @@
 #ifndef INCLUDE_SO_LOG_DATA_ONCE_FLAG
 #define INCLUDE_SO_LOG_DATA_ONCE_FLAG
 
+#include <set>
 #include "log.hpp"
 #include "datetime.hpp"
 
@@ -8,7 +9,7 @@ namespace so {
     class log_data
     {
     public:
-        log_data(log::label label) :
+        log_data(log_filter::label label) :
           label(label),
           begin(datetime::now()),
           clock(std::chrono::steady_clock::now()) {
@@ -26,11 +27,11 @@ namespace so {
         std::string get_tags();
 
     public:
-        std::string tags;
+        log_filter::label label;
+
+        std::set<std::string> tags;
 
     private:
-        log::label label;
-
         datetime begin;
 
         std::chrono::steady_clock::time_point clock;

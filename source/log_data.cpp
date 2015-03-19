@@ -3,7 +3,7 @@
 namespace so {
     namespace {
         const char* LOG_LABEL_LITERALS[] = {
-          "UNKNOWN", "FAILURE", "WARNING", "CAUTION", "MESSAGE", "SUCCESS",
+          "SPECIAL", "FAILURE", "WARNING", "CAUTION", "MESSAGE", "SUCCESS",
         };
 
         const char* LOG_LABEL_COLORS[] = {
@@ -13,11 +13,11 @@ namespace so {
         constexpr unsigned LOG_LABEL_AMOUNT = sizeof(LOG_LABEL_LITERALS) / sizeof(LOG_LABEL_LITERALS[0]);
 
         std::string get_colored_label(unsigned index, const std::string& label) {
-            return std::string{"\033[1;"} + LOG_LABEL_COLORS[index] + 'm' + label + "\033[22m\xE2\x94\xAC\033[0m";
+            return std::string{"\033[1;"} + LOG_LABEL_COLORS[index] + 'm' + label + "\033[22m\xE2\x94\xAC\033[m";
         }
 
         std::string get_colored_joint(unsigned index, const std::string& token) {
-            return std::string{"\n       \033["} + LOG_LABEL_COLORS[index] + 'm' + token + "\033[0m";
+            return std::string{"\n       \033["} + LOG_LABEL_COLORS[index] + 'm' + token + "\033[m";
         }
 
         std::string get_colored_time(unsigned index, const std::string& w3dt, long ms) {
@@ -25,7 +25,7 @@ namespace so {
             if (ms > 0) {
                 s += " +" + std::to_string(ms) + "ms";
             }
-            return s += "]\033[0m ";
+            return s += "]\033[m ";
         }
     }
 
@@ -58,6 +58,13 @@ namespace so {
     }
 
     std::string log_data::get_tags() {
-        return "\033[1m" + this->tags + "\033[0m";
+        std::string s;
+        if (not this->tags.empty()) {
+            s += "\033[1m ";
+            for (auto& t : this->tags) {
+                ((s += '#') += t) += ' ';
+            }
+        }
+        return s + "\033[m";
     }
 }

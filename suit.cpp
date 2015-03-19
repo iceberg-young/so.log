@@ -5,7 +5,7 @@
 using namespace std;
 using namespace so;
 
-void generate(log::label label) {
+void generate(log_filter::label label) {
     log x{label};
     x.append_tag("LGPL");
     x << "This program is free software: you can redistribute it and/or modify it\n"
@@ -20,16 +20,16 @@ void generate(log::label label) {
       "along with this program.  If not, see <http://www.gnu.org/licenses/>.";
     x.append_tag("v3");
     usleep(rand() % 7000);
-    cout << x.str() << endl;
+    cerr << x.str() << endl;
 }
 
 int main() {
-    generate(log::label::unknown);
-    generate(log::label::failure);
-    generate(log::label::warning);
-    generate(log::label::caution);
-    generate(log::label::message);
-    generate(log::label::success);
-    generate(static_cast<log::label>(13));
+    generate(log_filter::label::special);
+    generate(log_filter::label::failure);
+    generate(log_filter::label::warning);
+    generate(log_filter::label::caution);
+    generate(log_filter::label::message);
+    generate(log_filter::label::success);
+    generate(static_cast<log_filter::label>(13));
     return 0;
 }
