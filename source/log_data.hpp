@@ -18,6 +18,8 @@ namespace so {
     public:
         std::string get_head_prefix();
 
+        std::string get_body_lacuna();
+
         std::string get_body_prefix();
 
         std::string get_tail_prefix();
@@ -30,6 +32,9 @@ namespace so {
         log_filter::label label;
 
         std::set<std::string> tags;
+
+    protected:
+        std::string get_color();
 
     private:
         datetime begin;
