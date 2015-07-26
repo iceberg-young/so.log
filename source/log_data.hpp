@@ -6,40 +6,39 @@
 #include "datetime.hpp"
 
 namespace so {
-    class log_data
-    {
-    public:
-        log_data(log_filter::label label) :
-          label(label),
-          begin(datetime::now()),
-          clock(std::chrono::steady_clock::now()) {
-        }
+    class log_data {
+     public:
+        enum class prefix {
+            body, tail, none
+        };
 
-    public:
-        std::string get_head_prefix();
-
-        std::string get_body_lacuna();
-
-        std::string get_body_prefix();
-
-        std::string get_tail_prefix();
-
-        std::string get_time_summary();
-
-        std::string get_tags();
-
-    public:
-        log_filter::label label;
-
+     public:
+        const datetime begin;
+        const std::string color;
+        const log_label label;
         std::set<std::string> tags;
 
-    protected:
-        std::string get_color();
+     public:
+        log_data(log_label label) :
+          begin(datetime::now()),
+          color(log_data::get_color(label)),
+          label(label) {}
 
-    private:
-        datetime begin;
+     public:
+        std::string format(const std::string& content) const;
 
-        std::chrono::steady_clock::time_point clock;
+     protected:
+        std::string get_eot() const;
+
+        std::string get_head() const;
+
+        std::string get_prefix(prefix purpose) const;
+
+        std::string get_label() const;
+
+        std::string get_tags() const;
+
+        static std::string get_color(log_label label);
     };
 }
 

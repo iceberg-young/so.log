@@ -4,38 +4,36 @@
 #include <string>
 
 namespace so {
-    class log_filter
-    {
-    public:
-        enum class label
-        {
-            special,
-            failure,
-            warning,
-            caution,
-            message,
-            success,
-        };
+    enum class log_label :
+      unsigned {
+        special,
+        failure,
+        warning,
+        caution,
+        success,
+        verbose,
+    };
 
-    public:
+    class log_filter {
+     public:
         // <label>[(+/-)(tag,)+]
         static void configure(const std::string& settings);
 
-    public:
-        // Block all unspecified.
+     public:
+        // Block any log that has none of specified tags.
         static void on();
 
-        // Pass all unspecified.
+        // Block any log that has any of specified tags.
         static void off();
 
-        // Block the specified tag.
-        static void block(const std::string& tag);
+        // Specify a tag.
+        static void notice(const std::string& tag);
 
-        // Pass the specified tag.
-        static void pass(const std::string& tag);
+        // Revoke a specified tag.
+        static void ignore(const std::string& tag);
 
-        // Block any log that higher than `max`.
-        static void level(label max);
+        // Block any log that has a higher label than `max`.
+        static void latch(log_label max);
     };
 }
 

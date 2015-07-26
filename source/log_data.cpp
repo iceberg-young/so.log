@@ -2,87 +2,85 @@
 
 namespace so {
     namespace {
-        const std::string LOG_LABEL_LITERALS[] = {
-          "SPECIAL", "FAILURE", "WARNING", "CAUTION", "MESSAGE", "SUCCESS",
+        const std::string log_label_literals[]{
+          "SPECIAL", "FAILURE", "WARNING", "CAUTION", "SUCCESS", "VERBOSE"
         };
-
-        const std::string LOG_LABEL_COLORS[] = {
-          "34", "35", "31", "33", "36", "32", "39",
+        const std::string log_label_colors[]{
+          "34", "31", "35", "33", "32", "36", "37"
         };
+        constexpr unsigned log_label_amount = sizeof(log_label_literals) / sizeof(log_label_literals[0]);
 
-        constexpr unsigned LOG_LABEL_AMOUNT = sizeof(LOG_LABEL_LITERALS) / sizeof(LOG_LABEL_LITERALS[0]);
+        const std::string sgr_reset{"\033[m"};
+        const std::string sgr_underline{"\033[4m"};
+    }
 
-        std::string get_escape(const std::string& code) {
-            return "\033[" + code + 'm';
+    std::string log_data::format(const std::string& content) const {
+        std::string s{this->get_head()};
+        if (content.empty()) return s;
+
+        auto e = this->get_prefix(prefix::none);
+        auto p = this->get_prefix(prefix::body);
+
+        std::istringstream iss{std::move(content)};
+        std::string line;
+        while (not std::getline(iss, line).eof()) {
+            s += '\n';
+            line.empty() ? s += e : (s += p) += line;
         }
 
-        const std::string SGR_BOLD = "\033[1m";
+        s += '\n';
+        s += this->get_prefix(prefix::tail);
+        s += line;
+        return s += this->get_eot();
+    }
 
-        const std::string SGR_RESET = "\033[m";
+    std::string log_data::get_eot() const {
+        return this->color + "\xE2\x96\xA0" + sgr_reset;
+    }
 
-        std::string get_colored_label(const std::string& color, const std::string& label) {
-            return SGR_BOLD + color + label + get_escape("22") + "\xE2\x94\xAC" + SGR_RESET;
-        }
+    std::string log_data::get_head() const {
+        return this->color + sgr_underline + this->get_label() + sgr_reset
+          + ' ' + to_string(this->begin) + this->get_tags();
+    }
 
-        std::string get_colored_joint(const std::string& color, const std::string& token) {
-            return "\n       " + color + token + SGR_RESET;
-        }
-
-        std::string get_colored_time(const std::string& color, const std::string& w3dt, long ms) {
-            auto s = color + '[' + w3dt;
-            if (ms > 0) {
-                s += " +" + std::to_string(ms) + "ms";
+    std::string log_data::get_prefix(prefix purpose) const {
+        std::string p{this->color};
+        switch (purpose) {
+            case prefix::body: {
+                p += " \xE2\x94\x9C ";
+                break;
             }
-            return s + ']' + SGR_RESET;
-        }
-
-        std::string get_label(log_filter::label label) {
-            auto index = static_cast<unsigned>(label);
-            if (index >= LOG_LABEL_AMOUNT) {
-                char buffer[sizeof("0000000")];
-                snprintf(buffer, sizeof(buffer), "%07X", index);
-                return std::string{buffer, 7};
+            case prefix::tail: {
+                p += " \xE2\x94\x94 ";
+                break;
             }
-            return LOG_LABEL_LITERALS[index];
+            case prefix::none: {
+                p += " \xE2\x94\x82 ";
+                break;
+            }
         }
+        return p += sgr_reset;
     }
 
-    std::string log_data::get_head_prefix() {
-        return get_colored_label(this->get_color(), get_label(this->label));
+    std::string log_data::get_label() const {
+        auto index = static_cast<unsigned>(this->label);
+        return index < log_label_amount
+          ? log_label_literals[index]
+          : std::to_string(index);
     }
 
-    std::string log_data::get_body_lacuna() {
-        return get_colored_joint(this->get_color(), "\xE2\x94\x82");
-    }
-
-    std::string log_data::get_body_prefix() {
-        return get_colored_joint(this->get_color(), "\xE2\x94\x9C");
-    }
-
-    std::string log_data::get_tail_prefix() {
-        return get_colored_joint(this->get_color(), "\xE2\x94\x94");
-    }
-
-    std::string log_data::get_time_summary() {
-        auto w3dt = to_string(this->begin);
-        auto delta = std::chrono::steady_clock::now() - this->clock;
-        auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(delta).count();
-        return get_colored_time(this->get_color(), w3dt, ms);
-    }
-
-    std::string log_data::get_tags() {
+    std::string log_data::get_tags() const {
         std::string s;
         if (not this->tags.empty()) {
-            s += SGR_BOLD;
             for (auto& t : this->tags) {
-                (s += " #") += t;
+                s += " #" + this->color + t + sgr_reset;
             }
         }
-        return s + SGR_RESET;
+        return s;
     }
 
-    std::string log_data::get_color() {
-        auto index = std::min(static_cast<unsigned>(this->label), LOG_LABEL_AMOUNT);
-        return get_escape(LOG_LABEL_COLORS[index]);
+    std::string log_data::get_color(log_label label) {
+        auto index = std::min(static_cast<unsigned>(label), log_label_amount);
+        return "\033[" + log_label_colors[index] + 'm';
     }
 }

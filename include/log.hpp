@@ -7,24 +7,20 @@
 
 namespace so {
     class log :
-      public std::ostringstream
-    {
+      public std::ostringstream {
         friend std::ostream& operator<<(std::ostream& out, const class log& message);
 
-    public:
-        log(log_filter::label label);
+     public:
+        log(log_label label);
 
-    public:
+     public:
         void append_tag(const std::string& tag);
 
         void remove_tag(const std::string& tag);
 
         void clear_tags();
 
-    public:
-        std::string str() const;
-
-    private:
+     private:
         std::shared_ptr<class log_data> data;
     };
 }
