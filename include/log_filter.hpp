@@ -12,11 +12,12 @@ namespace so {
         caution,
         success,
         verbose,
+        count_known_labels,
     };
 
     class log_filter {
      public:
-        // <label>[(+/-)(tag,)+]
+        // latch[(+|-)tag(,tag)*]
         static void configure(const std::string& settings);
 
      public:

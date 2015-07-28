@@ -2,16 +2,24 @@
 
 namespace so {
     namespace {
-        const std::string log_label_literals[]{
+        constexpr auto known_labels = static_cast<size_t>(log_label::count_known_labels);
+
+        const char* const label_prints[]{
           "SPECIAL", "FAILURE", "WARNING", "CAUTION", "SUCCESS", "VERBOSE"
         };
-        const std::string log_label_colors[]{
-          "34", "31", "35", "33", "32", "36", "37"
-        };
-        constexpr unsigned log_label_amount = sizeof(log_label_literals) / sizeof(log_label_literals[0]);
+        static_assert(
+          sizeof(label_prints) / sizeof(label_prints[0]) == known_labels,
+          "Elements should match enumerations in `log_label`."
+        );
 
-        const std::string sgr_reset{"\033[m"};
-        const std::string sgr_underline{"\033[4m"};
+        const char label_colors[]{'4', '1', '5', '3', '2', '6', '7'};
+        static_assert(
+          sizeof(label_colors) == known_labels + 1, // +default
+          "Elements should match enumerations in `log_label`."
+        );
+
+        const char sgr_reset[]{"\033[m"};
+        const char sgr_underline[]{"\033[4m"};
     }
 
     std::string log_data::format(const std::string& content) const {
@@ -63,10 +71,8 @@ namespace so {
     }
 
     std::string log_data::get_label() const {
-        auto index = static_cast<unsigned>(this->label);
-        return index < log_label_amount
-          ? log_label_literals[index]
-          : std::to_string(index);
+        auto i = static_cast<size_t>(this->label);
+        return i < known_labels ? label_prints[i] : std::to_string(i);
     }
 
     std::string log_data::get_tags() const {
@@ -80,7 +86,7 @@ namespace so {
     }
 
     std::string log_data::get_color(log_label label) {
-        auto index = std::min(static_cast<unsigned>(label), log_label_amount);
-        return "\033[" + log_label_colors[index] + 'm';
+        auto i = std::min(static_cast<size_t>(label), known_labels);
+        return std::string{"\033[3"} + label_colors[i] + 'm';
     }
 }
