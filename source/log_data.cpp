@@ -43,7 +43,7 @@ namespace so {
     }
 
     std::string log_data::get_eot() const {
-        return this->color + "\xE2\x96\xA0" + sgr_reset;
+        return this->color + "\xE2\x96\xA0\n" + sgr_reset;
     }
 
     std::string log_data::get_head() const {

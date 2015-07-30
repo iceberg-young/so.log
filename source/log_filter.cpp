@@ -85,7 +85,7 @@ namespace so {
     std::ostream& operator<<(std::ostream& out, const log& message) {
         if (message.data->label <= block_latch
           and block_unspecified == any_of(message.data->tags)) {
-            out << message.data->format(message.str()) << '\n';
+            out << message.data->format(message.str());
         }
         return out;
     }
