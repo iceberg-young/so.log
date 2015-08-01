@@ -8,7 +8,7 @@ For easy to distinguish and read in console.
 API
 ---
 
-### Writing log
+### Writing Log
 
 See [log.hpp](include/log.hpp).
 
@@ -53,7 +53,7 @@ See [log.hpp](include/log.hpp).
 > By using 2 stream objects, you avoid interlaced text (*in multi-threading*)
 > from constructing complex log, which may not be an atom operation.
 
-### Filtering log
+### Filtering Log
 
 See [log_filter.hpp](include/log_filter.hpp).
 
@@ -125,6 +125,15 @@ verbose+demo,fun
 
 - `+` will trigger `so::log_filter::on()`, while `-` means `off()`.
 
+#### Deferred Filtering
+
+```sh
+$ tail -f my.log | awk '/demo/,/■/'
+```
+
+> **Tip!**
+> `■` is a [black square][U+25A0].
+
 
 License
 -------
@@ -150,6 +159,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 [CSI-SGR]: https://en.wikipedia.org/wiki/ANSI_escape_code#CSI_codes
 "SGR (Select Graphic Rendition) Parameters"
+
+[U+25A0]: http://www.fileformat.info/info/unicode/char/25a0/index.htm
+"Unicode Character 'BLACK SQUARE' (U+25A0)"
 
 [LGPLv3]: http://www.gnu.org/graphics/lgplv3-88x31.png
 "GNU Lesser General Public License version 3"
