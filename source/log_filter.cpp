@@ -31,6 +31,8 @@ namespace so {
         );
 
         void set_latch(const std::string& value) {
+            if (value.empty()) return;
+
             auto p = std::string{label_lookup}.find(value);
             if (p != std::string::npos) {
                 block_latch = static_cast<log_label>(p / size_per_label);
@@ -70,11 +72,11 @@ namespace so {
         block_unspecified = false;
     }
 
-    void log_filter::notice(const std::string& tag) {
+    void log_filter::append(const std::string& tag) {
         block_tags.insert(tag);
     }
 
-    void log_filter::ignore(const std::string& tag) {
+    void log_filter::remove(const std::string& tag) {
         block_tags.erase(tag);
     }
 

@@ -14,9 +14,9 @@ namespace so {
         log(log_label label = log_label::verbose);
 
      public:
-        void append_tag(const std::string& tag);
+        void assign(const std::string& tag);
 
-        void remove_tag(const std::string& tag);
+        void revoke(const std::string& tag);
 
         void clear_tags();
 

@@ -15,7 +15,7 @@ See [log.hpp](include/log.hpp).
 - Step 1: Streaming log text to a `so::log` object. E.g.
 
   ```cpp
-  so::log log{log_label::special};
+  so::log log{so::log_label::special};
   log << "Hello, ";
   // ...
   log << "world!";
@@ -27,8 +27,8 @@ See [log.hpp](include/log.hpp).
 - Step 2: Optionally, adding tags for better classification.
 
   ```cpp
-  so::log::append_tag(std::string tag)
-  so::log::remove_tag(std::string tag)
+  so::log::assign(std::string tag)
+  so::log::revoke(std::string tag)
   so::log::clear_tags()
   ```
 
@@ -56,6 +56,74 @@ See [log.hpp](include/log.hpp).
 ### Filtering log
 
 See [log_filter.hpp](include/log_filter.hpp).
+
+There are 2 factors can be used to control whether a `so::log` object really
+put its content into the other `std::ostream`.
+
+- The `so::log_label` enumeration, which is implemented as `unsigned` integer.
+
+  To specify a max value
+
+  ```cpp
+  so::log_filter::latch(so::log_label)
+  ```
+
+  any log constructed with a **greater** value will be blocked.
+
+- Tags.
+
+  By specifying a set of tags
+
+  ```cpp
+  so::log_filter::append(std::string)
+  so::log_filter::remove(std::string)
+  ```
+
+  you can
+
+  - block any log, unless it has a specified tag;
+
+    ```cpp
+    so::log_filter::on()
+    ```
+
+  - or only block a log which has any specified tag.
+
+    ```cpp
+    so::log_filter::off()
+    ```
+
+> **Tip!**
+> The default setting wont block any log.
+
+#### Set In One Call
+
+```cpp
+so::log_filter::configure(std::string)
+```
+
+The string should be formatted as
+
+```ebnf
+(* EBNF *) [ latch ] [ ( "+" | "-" ) tag { "," tag } ]
+```
+
+E.g.
+```
+verbose+demo,fun
+```
+
+- `latch` can be
+
+  - Literal name of any presented `so::log_label`.
+    Either UPPERCASE or lowercase, but not mixed. Fragment is also possible.
+
+    E.g. `FAILURE` `WARN` `caution` etc.
+
+  - Numeric (*determined by `std::strtoul()`*)
+    that would be casted to `so::log_label`.
+
+- `+` will trigger `so::log_filter::on()`, while `-` means `off()`.
 
 
 License

@@ -5,11 +5,11 @@ namespace so {
       data(std::make_shared<log_data>(label)) {
     }
 
-    void log::append_tag(const std::string& tag) {
+    void log::assign(const std::string& tag) {
         this->data->tags.insert(tag);
     }
 
-    void log::remove_tag(const std::string& tag) {
+    void log::revoke(const std::string& tag) {
         this->data->tags.erase(tag);
     }
 

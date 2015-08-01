@@ -17,21 +17,21 @@ namespace so {
 
     class log_filter {
      public:
-        // latch[(+|-)tag(,tag)*]
+        // (* EBNF *) [ latch ] [ ( "+" | "-" ) tag { "," tag } ]
         static void configure(const std::string& settings);
 
      public:
-        // Block any log that has none of specified tags.
+        // Block any log, unless it has a specified tag.
         static void on();
 
-        // Block any log that has any of specified tags.
+        // Only block a log which has any specified tag.
         static void off();
 
         // Specify a tag.
-        static void notice(const std::string& tag);
+        static void append(const std::string& tag);
 
-        // Revoke a specified tag.
-        static void ignore(const std::string& tag);
+        // Remove a specified tag.
+        static void remove(const std::string& tag);
 
         // Block any log that has a higher label than `max`.
         static void latch(log_label max);
