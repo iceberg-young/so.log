@@ -2,7 +2,7 @@ so.log
 ======
 
 Add [CSI-SGR] colorized prefixes to each line of log.
-For easy to distinguish and read in console.
+For easy to distinguish and read in text terminal.
 
 
 API
@@ -34,7 +34,7 @@ See [log.hpp](include/log.hpp).
 
   E.g.
   ```cpp
-  log.append_tag("demo");
+  log.assign("demo");
   ```
 
 - Step 3: Streaming the `so::log` object to the target stream.
@@ -65,7 +65,7 @@ put its content into the other `std::ostream`.
   To specify a max value
 
   ```cpp
-  so::log_filter::latch(so::log_label)
+  static so::log_filter::latch(so::log_label)
   ```
 
   any log constructed with a **greater** value will be blocked.
@@ -75,8 +75,8 @@ put its content into the other `std::ostream`.
   By specifying a set of tags
 
   ```cpp
-  so::log_filter::append(std::string)
-  so::log_filter::remove(std::string)
+  static so::log_filter::append(std::string)
+  static so::log_filter::remove(std::string)
   ```
 
   you can
@@ -84,13 +84,13 @@ put its content into the other `std::ostream`.
   - block any log, unless it has a specified tag;
 
     ```cpp
-    so::log_filter::on()
+    static so::log_filter::on()
     ```
 
   - or only block a log which has any specified tag.
 
     ```cpp
-    so::log_filter::off()
+    static so::log_filter::off()
     ```
 
 > **Tip!**
@@ -99,7 +99,7 @@ put its content into the other `std::ostream`.
 #### Set In One Call
 
 ```cpp
-so::log_filter::configure(std::string)
+static so::log_filter::configure(std::string)
 ```
 
 The string should be formatted as
@@ -118,12 +118,12 @@ verbose+demo,fun
   - Literal name of any presented `so::log_label`.
     Either UPPERCASE or lowercase, but not mixed. Fragment is also possible.
 
-    E.g. `FAILURE` `WARN` `caution` etc.
+    E.g. `FAILURE`, `WARN`, `caution`, etc.
 
   - Numeric (*determined by `std::strtoul()`*)
     that would be casted to `so::log_label`.
 
-- `+` will trigger `so::log_filter::on()`, while `-` means `off()`.
+- `+` will trigger `so::log_filter::on()`, while `-` will be `off()`.
 
 #### Deferred Filtering
 
