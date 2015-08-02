@@ -1,5 +1,8 @@
-#ifndef INCLUDE_SO_LOG_DATA_ONCE_FLAG
-#define INCLUDE_SO_LOG_DATA_ONCE_FLAG
+/**
+ * @copyright 2015 Iceberg YOUNG
+ * @license GNU Lesser General Public License version 3
+ */
+#pragma once
 
 #include <set>
 #include "log.hpp"
@@ -41,5 +44,3 @@ namespace so {
         static std::string get_color(log_label label);
     };
 }
-
-#endif//INCLUDE_SO_LOG_DATA_ONCE_FLAG
