@@ -15,7 +15,7 @@ namespace so {
         caution,
         success,
         verbose,
-        count_known_labels,
+        _count_,
     };
 
     class log_filter {

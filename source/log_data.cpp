@@ -7,19 +7,19 @@
 
 namespace so {
     namespace {
-        constexpr auto known_labels = static_cast<size_t>(log_label::count_known_labels);
-
-        const char* const label_prints[]{
-          "SPECIAL", "FAILURE", "WARNING", "CAUTION", "SUCCESS", "VERBOSE"
+        // Hack! Only works if all labels have (been padded to) the same length.
+        const char label_prints[][log_label_length]{
+          "SPECIAL", "FAILURE", "WARNING", "CAUTION", "SUCCESS", "VERBOSE",
+          "special", "failure", "warning", "caution", "success", "verbose",
         };
         static_assert(
-          sizeof(label_prints) / sizeof(label_prints[0]) == known_labels,
+          sizeof(label_prints) / log_label_length == log_known_labels * 2,
           "Elements should match enumerations in `log_label`."
         );
 
         const char label_colors[]{'4', '1', '5', '3', '2', '6', '7'};
         static_assert(
-          sizeof(label_colors) == known_labels + 1, // +default
+          sizeof(label_colors) == log_known_labels + 1, // +default
           "Elements should match enumerations in `log_label`."
         );
 
@@ -27,28 +27,29 @@ namespace so {
         const char sgr_underline[]{"\033[4m"};
     }
 
+    const std::string log_data::label_lookup{
+      reinterpret_cast<const char*>(label_prints),
+      sizeof(label_prints)
+    };
+
     std::string log_data::format(const std::string& content) const {
         std::string s{this->get_head()};
         if (content.empty()) return s;
 
-        auto e = this->get_prefix(prefix::none);
-        auto p = this->get_prefix(prefix::body);
-
         std::istringstream iss{std::move(content)};
         std::string line;
+        auto e = this->color + " \xE2\x94\x82 " + sgr_reset;
+        auto p = this->color + " \xE2\x94\x9C " + sgr_reset;
         while (not std::getline(iss, line).eof()) {
             s += '\n';
             line.empty() ? s += e : (s += p) += line;
         }
-
         s += '\n';
-        s += this->get_prefix(prefix::tail);
+        ((s += this->color) += " \xE2\x94\x94 ") += sgr_reset;
         s += line;
-        return s += this->get_eot();
-    }
 
-    std::string log_data::get_eot() const {
-        return this->color + "\xE2\x96\xA0\n" + sgr_reset;
+        ((s += this->color) += "\xE2\x96\xA0") += sgr_reset;
+        return s += '\n';
     }
 
     std::string log_data::get_head() const {
@@ -56,28 +57,9 @@ namespace so {
           + ' ' + to_string(this->begin) + this->get_tags();
     }
 
-    std::string log_data::get_prefix(prefix purpose) const {
-        std::string p{this->color};
-        switch (purpose) {
-            case prefix::body: {
-                p += " \xE2\x94\x9C ";
-                break;
-            }
-            case prefix::tail: {
-                p += " \xE2\x94\x94 ";
-                break;
-            }
-            case prefix::none: {
-                p += " \xE2\x94\x82 ";
-                break;
-            }
-        }
-        return p += sgr_reset;
-    }
-
     std::string log_data::get_label() const {
         auto i = static_cast<size_t>(this->label);
-        return i < known_labels ? label_prints[i] : std::to_string(i);
+        return i < log_known_labels ? label_prints[i] : std::to_string(i);
     }
 
     std::string log_data::get_tags() const {
@@ -91,7 +73,7 @@ namespace so {
     }
 
     std::string log_data::get_color(log_label label) {
-        auto i = std::min(static_cast<size_t>(label), known_labels);
+        auto i = std::min(static_cast<size_t>(label), log_known_labels);
         return std::string{"\033[3"} + label_colors[i] + 'm';
     }
 }

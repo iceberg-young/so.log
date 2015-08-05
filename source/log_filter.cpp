@@ -19,28 +19,14 @@ namespace so {
             return false;
         }
 
-        const char label_lookup[]{
-          ""
-            "SPECIAL" "special"
-            "FAILURE" "failure"
-            "WARNING" "warning"
-            "CAUTION" "caution"
-            "SUCCESS" "success"
-            "VERBOSE" "verbose"
-        };
-        constexpr size_t size_per_label = 14;
-        constexpr size_t known_labels = static_cast<size_t>(log_label::count_known_labels);
-        static_assert(
-          size_per_label * known_labels == sizeof(label_lookup) - 1, // -'\0'
-          "Lookup will be very simple if length of all labels are the same."
-        );
-
         void set_latch(const std::string& value) {
             if (value.empty()) return;
 
-            auto p = std::string{label_lookup}.find(value);
+            auto p = log_data::label_lookup.find(value);
             if (p != std::string::npos) {
-                block_latch = static_cast<log_label>(p / size_per_label);
+                block_latch = static_cast<log_label>(
+                  p / log_label_length % log_known_labels
+                );
             }
 
             char* e = nullptr;

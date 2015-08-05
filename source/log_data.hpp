@@ -11,9 +11,7 @@
 namespace so {
     class log_data {
      public:
-        enum class prefix {
-            body, tail, none
-        };
+        static const std::string label_lookup;
 
      public:
         const datetime begin;
@@ -31,11 +29,7 @@ namespace so {
         std::string format(const std::string& content) const;
 
      protected:
-        std::string get_eot() const;
-
         std::string get_head() const;
-
-        std::string get_prefix(prefix purpose) const;
 
         std::string get_label() const;
 
@@ -43,4 +37,7 @@ namespace so {
 
         static std::string get_color(log_label label);
     };
+
+    constexpr auto log_known_labels = static_cast<size_t>(log_label::_count_);
+    constexpr auto log_label_length = 8U;
 }
