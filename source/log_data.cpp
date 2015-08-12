@@ -54,7 +54,12 @@ namespace so {
 
     std::string log_data::get_head() const {
         return this->color + sgr_underline + this->get_label() + sgr_reset
-          + ' ' + to_string(this->begin) + this->get_tags();
+          + ' ' + this->get_interval() + this->get_tags();
+    }
+
+    std::string log_data::get_interval() const {
+        auto elapsed = std::chrono::steady_clock::now() - this->begin;
+        return to_string(elapsed) + '/' + to_string(datetime::now());
     }
 
     std::string log_data::get_label() const {

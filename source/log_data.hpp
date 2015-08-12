@@ -14,14 +14,14 @@ namespace so {
         static const std::string label_lookup;
 
      public:
-        const datetime begin;
+        const std::chrono::steady_clock::time_point begin;
         const std::string color;
         const log_label label;
         std::set<std::string> tags;
 
      public:
         log_data(log_label label) :
-          begin(datetime::now()),
+          begin(std::chrono::steady_clock::now()),
           color(log_data::get_color(label)),
           label(label) {}
 
@@ -30,6 +30,8 @@ namespace so {
 
      protected:
         std::string get_head() const;
+
+        std::string get_interval() const;
 
         std::string get_label() const;
 
