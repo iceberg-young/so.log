@@ -18,6 +18,8 @@ See [log.hpp](include/log.hpp).
   so::log log{so::log_label::special};
   log << "Hello, ";
   // ...
+  usleep(1234567);
+  // ...
   log << "world!";
   ```
 
@@ -62,7 +64,7 @@ put its content into the other `std::ostream`.
 
 - The `so::log_label` enumeration, which is implemented as `unsigned` integer.
 
-  To specify a max value
+  Once specified a max value
 
   ```cpp
   static so::log_filter::latch(so::log_label)
