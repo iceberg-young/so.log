@@ -18,7 +18,7 @@ See [log.hpp](include/log.hpp).
   so::log log{so::log_label::special};
   log << "Hello, ";
   // ...
-  usleep(1234567);
+  std::this_thread::sleep_for(std::chrono::milliseconds{1234});
   // ...
   log << "world!";
   ```
@@ -29,9 +29,9 @@ See [log.hpp](include/log.hpp).
 - Step 2: Optionally, adding tags for better classification.
 
   ```cpp
-  so::log::assign(std::string tag)
-  so::log::revoke(std::string tag)
-  so::log::clear_tags()
+  void  so::log::assign(std::string tag);
+  void  so::log::revoke(std::string tag);
+  void  so::log::clear_tags();
   ```
 
   E.g.
@@ -41,9 +41,9 @@ See [log.hpp](include/log.hpp).
 
 - Step 3: Streaming the `so::log` object to the target stream.
 
-  > ```cpp
-  > std::ostream& operator<<(std::ostream& out, so::log message)
-  > ```
+  ```cpp
+  std::ostream& operator<<(std::ostream&, so::log);
+  ```
 
   E.g.
   ```cpp
@@ -53,7 +53,7 @@ See [log.hpp](include/log.hpp).
 
 > **Tip!**
 > By using 2 stream objects, you avoid interlaced text (*in multi-threading*)
-> from constructing complex log, which may not be an atom operation.
+> from constructing complex log, as it may not be an atomic operation.
 
 ### Filtering Log
 
@@ -67,7 +67,8 @@ put its content into the other `std::ostream`.
   Once specified a max value
 
   ```cpp
-  static so::log_filter::latch(so::log_label)
+  static
+  void  so::log_filter::latch(so::log_label);
   ```
 
   any log constructed with a **greater** value will be blocked.
@@ -77,8 +78,10 @@ put its content into the other `std::ostream`.
   By specifying a set of tags
 
   ```cpp
-  static so::log_filter::append(std::string)
-  static so::log_filter::remove(std::string)
+  static
+  void  so::log_filter::append(std::string);
+  static
+  void  so::log_filter::remove(std::string);
   ```
 
   you can
@@ -86,13 +89,15 @@ put its content into the other `std::ostream`.
   - block any log, unless it has a specified tag;
 
     ```cpp
-    static so::log_filter::on()
+    static
+    void  so::log_filter::on();
     ```
 
   - or only block a log which has any specified tag.
 
     ```cpp
-    static so::log_filter::off()
+    static
+    void  so::log_filter::off();
     ```
 
 > **Tip!**
@@ -101,7 +106,8 @@ put its content into the other `std::ostream`.
 #### Set In One Call
 
 ```cpp
-static so::log_filter::configure(std::string)
+static
+void  so::log_filter::configure(std::string);
 ```
 
 The string should be formatted as
@@ -134,7 +140,7 @@ $ tail -f my.log | awk '/demo/,/■/'
 ```
 
 > **Tip!**
-> `■` is a [black square][U+25A0].
+> `■` is a [unicode black square][U+25A0].
 
 
 License

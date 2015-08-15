@@ -11,7 +11,7 @@
 namespace so {
     class log :
       public std::ostringstream {
-        friend std::ostream& operator<<(std::ostream& out, const class log& message);
+        friend std::ostream& operator<<(std::ostream& out, const log& message);
 
      public:
         log(log_label label = log_label::verbose);
