@@ -1,0 +1,30 @@
+{
+	"name": "so.log",
+	"version": "1.0.0",
+	"license": "LGPL-3.0",
+	"author": "Iceberg YOUNG <iceberg.young@gmail.com>",
+	"keywords": [
+		"log"
+	],
+	"main": "$.a",
+	"provides": {
+		"$.a": {
+			"type": "lib",
+			"rule": "archive",
+			"source": {
+				"source/*.cpp": "compile"
+			}
+		}
+	},
+	"requires": {
+		"so.datetime": "^1.0.0"
+	},
+	"tests": {
+		"suit": {
+			"rule": "program",
+			"source": {
+				"suit.cpp": "compile"
+			}
+		}
+	}
+}
