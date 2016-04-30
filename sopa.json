@@ -4,11 +4,12 @@
 	"license": "LGPL-3.0",
 	"author": "Iceberg YOUNG <iceberg.young@gmail.com>",
 	"keywords": [
-		"log"
+		"log",
+		"sgr"
 	],
-	"main": "$.a",
 	"provides": {
-		"$.a": {
+		"^": "include",
+		"$": {
 			"type": "lib",
 			"rule": "archive",
 			"source": {
@@ -21,7 +22,6 @@
 	},
 	"tests": {
 		"suit": {
-			"rule": "program",
 			"source": {
 				"suit.cpp": "compile"
 			}

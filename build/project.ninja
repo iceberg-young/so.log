@@ -2,20 +2,24 @@
 
 ar = gcc-ar-5
 gcc = g++-5
-includes = -I ../include -I ../depends/so.datetime/include
+includes = -I ../include -I ../depend/so.datetime/include
 
-include rules.ninja
-
+# provide [so.log]
 build .midway/source/log.o: compile ../source/log.cpp
 build .midway/source/log_data.o: compile ../source/log_data.cpp
 build .midway/source/log_filter.o: compile ../source/log_filter.cpp
-build .midway/suit.o: compile ../suit.cpp
-
 build lib/so.log.a: archive $
   .midway/source/log.o $
   .midway/source/log_data.o $
   .midway/source/log_filter.o
+
+# require [so.datetime]
+build ../depend/so.datetime/build/lib/so.datetime.a: cascade
+  project = so.datetime
+
+# tests [suit]
+build .midway/suit.o: compile ../suit.cpp
 build test/suit: program $
   .midway/suit.o $
   lib/so.log.a $
-  ../depends/so.datetime/build/lib/so.datetime.a
+  ../depend/so.datetime/build/lib/so.datetime.a

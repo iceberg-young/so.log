@@ -1,6 +1,9 @@
 rule archive
   command = $ar rcs $out $in
 
+rule cascade
+  command = ninja -C ../depend/$project/build
+
 compile_options = -flto -fPIC -O3 -std=c++14 -Wall
 
 rule compile
